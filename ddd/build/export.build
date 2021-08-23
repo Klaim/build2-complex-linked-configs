@@ -1,0 +1,6 @@
+$out_root/
+{
+  include ddd/
+}
+
+export $out_root/ddd/$import.target

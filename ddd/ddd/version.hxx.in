@@ -1,0 +1,34 @@
+#pragma once
+
+// The numeric version format is AAAAABBBBBCCCCCDDDE where:
+// 
+// AAAAA - major version number
+// BBBBB - minor version number
+// CCCCC - bugfix version number
+// DDD   - alpha / beta (DDD + 500) version number
+// E     - final (0) / snapshot (1)
+// 
+// When DDDE is not 0, 1 is subtracted from AAAAABBBBBCCCCC. For example:
+// 
+// Version      AAAAABBBBBCCCCCDDDE
+// 
+// 0.1.0        0000000001000000000
+// 0.1.2        0000000001000020000
+// 1.2.3        0000100002000030000
+// 2.2.0-a.1    0000200001999990010
+// 3.0.0-b.2    0000299999999995020
+// 2.2.0-a.1.z  0000200001999990011
+// 
+#define DDD_VERSION       $ddd.version.project_number$ULL
+#define DDD_VERSION_STR   "$ddd.version.project$"
+#define DDD_VERSION_ID    "$ddd.version.project_id$"
+#define DDD_VERSION_FULL  "$ddd.version$"
+
+#define DDD_VERSION_MAJOR $ddd.version.major$
+#define DDD_VERSION_MINOR $ddd.version.minor$
+#define DDD_VERSION_PATCH $ddd.version.patch$
+
+#define DDD_PRE_RELEASE   $ddd.version.pre_release$
+
+#define DDD_SNAPSHOT_SN   $ddd.version.snapshot_sn$ULL
+#define DDD_SNAPSHOT_ID   "$ddd.version.snapshot_id$"

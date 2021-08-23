@@ -1,0 +1,13 @@
+$out_root/
+{
+  include ccc/
+}
+
+if($target == 'exe{cccgen}')
+{
+  export $out_root/cccgen/$import.target
+}
+else
+{
+  export $out_root/ccc/$import.target
+}

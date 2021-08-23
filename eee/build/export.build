@@ -1,0 +1,6 @@
+$out_root/
+{
+  include eee/
+}
+
+export $out_root/eee/$import.target
