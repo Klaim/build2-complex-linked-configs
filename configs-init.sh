@@ -30,9 +30,9 @@ bdep config add build-targetZ/ @targetZ
 bdep config add build-host/ @host --no-default
 # Link the configurations so that dependencies are found in the right configuration. (note that I could have used `bpkg link` with build configs paths, but it's shorter with `bdep`)
 # Link them all to host config first:
-bdep config link @host @targetX
-bdep config link @host @targetY
-bdep config link @host @targetZ
+# bdep config link @targetX @host
+# bdep config link @targetY @host
+# bdep config link @targetZ @host
 # Then link the targets to each other where it make sense:
 bdep config link @targetX @targetY
 bdep config link @targetX @targetZ
