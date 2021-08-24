@@ -1,9 +1,12 @@
-# : basics
-# :
-# $* 'World' >'Hello, World!'
 
-# : missing-name
-# :
-# $* 2>>EOE != 0
-# error: missing name
-# EOE
+: basics
+:
+$* World >>~@EOO@ &World == 0
+@cccgen generating "[\w/\\.:_-]+World" \.{3} DONE@
+EOO
+
+: missing-name
+:
+$* 2>>EOE != 0
+error: missing name
+EOE

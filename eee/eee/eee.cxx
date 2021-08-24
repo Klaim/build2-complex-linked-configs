@@ -3,6 +3,8 @@
 #include <ostream>
 #include <stdexcept>
 
+#include <ccc/ccc.hxx>
+
 using namespace std;
 
 namespace eee

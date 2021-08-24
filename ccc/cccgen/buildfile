@@ -1,5 +1,5 @@
 libs =
-import libs += lib{ccc}
+import libs += lib{ccc} fmt%lib{fmt}
 
 exe{cccgen}: {hxx ixx txx cxx}{**} $libs testscript
 

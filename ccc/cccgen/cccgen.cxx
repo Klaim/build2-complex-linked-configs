@@ -2,6 +2,8 @@
 #include <fstream>
 #include <filesystem>
 #include <ccc/ccc.hxx>
+#include <fmt/core.h>
+#include <fmt/ostream.h>
 
 int main (int argc, char* argv[])
 {
@@ -15,8 +17,8 @@ int main (int argc, char* argv[])
 
 
   namespace fs = std::filesystem;
-  const fs::path file_path{ argv[1] };
-  cout << "cccgen generating " << file_path << " ..." << endl;
+  const auto file_path = fs::absolute(argv[1]);
+  fmt::print("cccgen generating {} ...", file_path);
   ccc::generate(file_path);
-
+  fmt::print(" DONE\n");
 }
