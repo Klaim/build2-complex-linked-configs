@@ -1,5 +1,5 @@
 bdep deinit -a && bdep config remove -a
-rm -rf build-* .bdep
+rm -rf build-* .bdep *-host
 
 # packages:
 # A -> B -> C

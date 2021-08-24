@@ -1,9 +1,10 @@
 $out_root/
 {
   include ccc/
+  include cccgen/
 }
 
-if($target == 'exe{cccgen}')
+if($import.target == exe{cccgen})
 {
   export $out_root/cccgen/$import.target
 }
