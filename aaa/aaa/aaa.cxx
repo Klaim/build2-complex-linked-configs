@@ -1,5 +1,8 @@
 #include <iostream>
 
+#include <bbb/bbb.hxx>
+#include <ddd/ddd.hxx>
+
 int main (int argc, char* argv[])
 {
   using namespace std;
