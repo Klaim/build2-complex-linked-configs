@@ -15,14 +15,16 @@ rm -rf build-* .bdep *-host
 if command -v g++ &> /dev/null
 then
     default_compiler=g++
+    default_cppargs="-Og -g"
 else
     default_compiler=cl
+    default_cppargs="/W4"
 fi
 
 # As this is a complex setup, instead of using shortcut commands, we'll do each step separately.
 # First: create each build configurations
-bpkg create cc config.cxx=cl -d ./build-host --type host
-bpkg create cc config.cxx=cl "config.cxx.coptions='/W4'" -d ./build-targetX
+bpkg create cc config.cxx=$default_compiler -d ./build-host --type host
+bpkg create cc config.cxx=$default_compiler "config.cxx.coptions=$default_cppargs" -d ./build-targetX
 bpkg create cc config.cxx=clang++ "config.cxx.coptions=-O2 -Wall -Wextra -Weffc++ -pedantic" -d ./build-targetY
 bpkg create cc config.cxx=clang++ "config.cxx.coptions=-g -Wall -Wextra -Weffc++ -pedantic" -d ./build-targetZ
 
