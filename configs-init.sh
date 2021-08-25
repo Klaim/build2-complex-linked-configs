@@ -12,13 +12,19 @@ rm -rf build-* .bdep *-host
 # Y {B, D }
 # Z { E }
 
+if command -v g++ &> /dev/null
+then
+    default_compiler=g++
+else
+    default_compiler=cl
+fi
 
 # As this is a complex setup, instead of using shortcut commands, we'll do each step separately.
 # First: create each build configurations
-bpkg create cc config.cxx=cl config.c=cl -d ./build-host --type host
-bpkg create cc config.cxx=cl config.c=cl "config.cxx.coptions='/W4'" -d ./build-targetX
-bpkg create cc config.cxx=clang++ config.c=clang "config.cxx.coptions=-O2 -Wall -Wextra -Weffc++ -pedantic" -d ./build-targetY
-bpkg create cc config.cxx=clang++ config.c=clang "config.cxx.coptions=-g -Wall -Wextra -Weffc++ -pedantic" -d ./build-targetZ
+bpkg create cc config.cxx=cl -d ./build-host --type host
+bpkg create cc config.cxx=cl "config.cxx.coptions='/W4'" -d ./build-targetX
+bpkg create cc config.cxx=clang++ "config.cxx.coptions=-O2 -Wall -Wextra -Weffc++ -pedantic" -d ./build-targetY
+bpkg create cc config.cxx=clang++ "config.cxx.coptions=-g -Wall -Wextra -Weffc++ -pedantic" -d ./build-targetZ
 
 # Prepare for initialization. Usually this is done with initialiazing packages/projects in one step,
 # but we want to link the configurations before initializing the packages, so here we go:
@@ -43,4 +49,20 @@ bdep init -d eee/ @targetZ
 bdep init -d aaa/ @targetX
 
 # Run tests but just for the main application:
-# b test: aaa/
+echo "running: bdep test"
+bdep test
+# OR (because aaa/ is initialized in the 'forward' config)
+echo "running: b test: aaa/"
+b test: aaa/
+# OR (because aaa/ is initialized in the 'forward' config)
+echo "running: cd aaa/ && b test"
+$(cd aaa/ && b test)
+# OR explicitely specifying the build directory to build+test (useful in case where there are several variations of the same config like debug, release, asan...)
+echo "running: b test: build-targetX/aaa/"
+b test: build-targetX/aaa/
+
+# Run all the tests from all the configurations
+# Note that packages in @host will not have their tests setup except if you did manually set them up.
+echo "running all the tests from all configs (except @host)"
+bdep test --all
+
