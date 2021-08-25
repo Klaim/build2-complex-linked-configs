@@ -15,7 +15,7 @@ rm -rf build-* .bdep *-host
 if command -v g++ &> /dev/null
 then
     default_compiler=g++
-    default_cppargs=\'-Og\' \'-g\'
+    default_cppargs=-Og -g
 else
     default_compiler=cl
     default_cppargs=\'/W4\'
