@@ -1,4 +1,4 @@
-bdep deinit -a && bdep config remove -a
+# bdep deinit -a && bdep config remove -a
 rm -rf build-*/ .bdep/ *-host/
 
 # packages:
@@ -39,9 +39,9 @@ bdep config link @targetX @targetY
 bdep config link @targetX @targetZ
 bdep config link @targetY @targetZ
 # Make sure the host config packages are available to all configs
-# bdep config link @targetX @host
-# bdep config link @targetY @host
-# bdep config link @targetZ @host
+bdep config link @targetX @host
+bdep config link @targetY @host
+bdep config link @targetZ @host
 
 # Now we can initialize the packages/projects in the right configurations:
 # Beware, the order of initialization is important to be sure dependencies will not be automatically initialized in their user's configuration.
@@ -49,9 +49,8 @@ bdep config link @targetY @targetZ
 # Also note that we decide that `boost` librraries should be built into the host config, because why not.
 bdep init -d bbb/ @targetY
 bdep init -d ddd/ @targetY
-bdep init -d eee/ @targetZ
+bdep init -d eee/ @targetZ { @host }+ ?libboost-container
 bdep init -d aaa/ @targetX
-# bdep init -d bbb/ @targetY # { @host }+ ?libboost-container
 
 # Run tests but just for the main application:
 echo "running: bdep test"
