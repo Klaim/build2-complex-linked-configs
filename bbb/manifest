@@ -12,4 +12,7 @@ depends: * build2 >= 0.13.0
 depends: * bpkg >= 0.13.0
 #depends: libhello ^1.0.0
 
+
+# the star means it's a compile-time dependency, it will be built in the host configuration
 depends: * ccc
+

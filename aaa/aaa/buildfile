@@ -1,5 +1,5 @@
 libs =
-import libs += bbb%lib{bbb} ddd%lib{ddd} eee%lib{eee}
+import libs += bbb%lib{bbb} ddd%lib{ddd} eee%lib{eee} libboost-container%lib{boost_container}
 
 exe{aaa}: {hxx ixx txx cxx}{**} $libs testscript
 

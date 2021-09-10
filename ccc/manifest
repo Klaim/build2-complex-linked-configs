@@ -12,4 +12,4 @@ depends: * build2 >= 0.13.0
 depends: * bpkg >= 0.13.0
 #depends: libhello ^1.0.0
 
-depends: fmt
+depends: fmt ^8.0.0

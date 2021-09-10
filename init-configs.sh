@@ -1,5 +1,5 @@
 bdep deinit -a && bdep config remove -a
-rm -rf build-* .bdep *-host
+rm -rf build-*/ .bdep/ *-host/
 
 # packages:
 # A -> B -> C
@@ -21,34 +21,37 @@ else
     default_cppargs=\'/W4\'
 fi
 
-# As this is a complex setup, instead of using shortcut commands, we'll do each step separately.
-# First: create each build configurations
-bpkg create cc config.cxx=$default_compiler -d ./build-host --type host
-bpkg create cc config.cxx=$default_compiler "config.cxx.coptions=$default_cppargs" -d ./build-targetX
-bpkg create cc config.cxx=clang++ "config.cxx.coptions=-O2 -Wall -Wextra -Weffc++ -pedantic" -d ./build-targetY
-bpkg create cc config.cxx=clang++ "config.cxx.coptions=-g -Wall -Wextra -Weffc++ -pedantic" -d ./build-targetZ
-
 # Prepare for initialization. Usually this is done with initialiazing packages/projects in one step,
 # but we want to link the configurations before initializing the packages, so here we go:
 bdep init --empty
-# Prepare the configurations so that we can use bdep instead of bpkg (which is a lower level tool).
-bdep config add build-targetX/ @targetX --default --forward
-bdep config add build-targetY/ @targetY
-bdep config add build-targetZ/ @targetZ
-bdep config add build-host/ @host --no-default
+
+# As this is a complex setup, instead of using shortcut commands, we'll do each step separately.
+# First: create each build configurations (note that `--default --forward` is implicit if first created config)
+bdep config create build-targetX/ @targetX cc config.cxx=$default_compiler "config.cxx.coptions=$default_cppargs"
+bdep config create build-targetY/ @targetY cc config.cxx=clang++ "config.cxx.coptions=-O2 -Wall -Wextra -Weffc++ -pedantic"
+bdep config create build-targetZ/ @targetZ cc config.cxx=clang++ "config.cxx.coptions=-g -Wall -Wextra -Weffc++ -pedantic"
+# The host configuration will be created automatically if not defined and there are compile-time dependencies, but here I decided to make it myself to have full control on it.
+bdep config create build-host/ @host cc config.cxx=$default_compiler --type host --no-default
+
 # Link the configurations so that dependencies are found in the right configuration. (note that I could have used `bpkg link` with build configs paths, but it's shorter with `bdep`)
 #  the targets to each other where it make sense:
 bdep config link @targetX @targetY
 bdep config link @targetX @targetZ
 bdep config link @targetY @targetZ
+# Make sure the host config packages are available to all configs
+# bdep config link @targetX @host
+# bdep config link @targetY @host
+# bdep config link @targetZ @host
 
 # Now we can initialize the packages/projects in the right configurations:
 # Beware, the order of initialization is important to be sure dependencies will not be automatically initialized in their user's configuration.
 # bdep init -d ccc/ @host # Optional, use this if you want to debug that package too, otherwise it will be automatically initialized in the host config, but without the tests.
+# Also note that we decide that `boost` librraries should be built into the host config, because why not.
 bdep init -d bbb/ @targetY
 bdep init -d ddd/ @targetY
 bdep init -d eee/ @targetZ
 bdep init -d aaa/ @targetX
+# bdep init -d bbb/ @targetY # { @host }+ ?libboost-container
 
 # Run tests but just for the main application:
 echo "running: bdep test"
