@@ -8,9 +8,9 @@ rm -rf build-*/ .bdep/ *-host/
 
 # configurations (targets except "host"):
 # host { C }
-# X { A }
+# X { A, E }
 # Y {B, D }
-# Z { E }
+# Z { boost-* }
 
 if command -v g++ &> /dev/null
 then
@@ -30,7 +30,7 @@ bdep init --empty
 bdep config create build-targetX/ @targetX cc config.cxx=$default_compiler "config.cxx.coptions=$default_cppargs"
 bdep config create build-targetY/ @targetY cc config.cxx=clang++ "config.cxx.coptions=-O2 -Wall -Wextra -Weffc++ -pedantic"
 bdep config create build-targetZ/ @targetZ cc config.cxx=clang++ "config.cxx.coptions=-g -Wall -Wextra -Weffc++ -pedantic"
-# The host configuration will be created automatically if not defined and there are compile-time dependencies, but here I decided to make it myself to have full control on it.
+# The host configuration will be created automatically if not defined and there are compile-time dependencies, but here I decided to make it myself to have full control over it.
 bdep config create build-host/ @host cc config.cxx=$default_compiler --type host --no-default
 
 # Link the configurations so that dependencies are found in the right configuration. (note that I could have used `bpkg link` with build configs paths, but it's shorter with `bdep`)
@@ -38,19 +38,15 @@ bdep config create build-host/ @host cc config.cxx=$default_compiler --type host
 bdep config link @targetX @targetY
 bdep config link @targetX @targetZ
 bdep config link @targetY @targetZ
-# Make sure the host config packages are available to all configs
-bdep config link @targetX @host
-bdep config link @targetY @host
-bdep config link @targetZ @host
 
 # Now we can initialize the packages/projects in the right configurations:
 # Beware, the order of initialization is important to be sure dependencies will not be automatically initialized in their user's configuration.
 # bdep init -d ccc/ @host # Optional, use this if you want to debug that package too, otherwise it will be automatically initialized in the host config, but without the tests.
-# Also note that we decide that `boost` librraries should be built into the host config, because why not.
+# Also note that we decide that `boost` librraries (dependencies of `eee`) should be built into the `@targetZ` config even if `eee` is in `@targetX`, because why not, flexing.
+# Initializing `aaa/` without initializing `eee/` will automatically use `eee/` as a dependency (not initialized).
 bdep init -d bbb/ @targetY
 bdep init -d ddd/ @targetY
-bdep init -d eee/ @targetZ { @host }+ ?libboost-container
-bdep init -d aaa/ @targetX
+bdep init -d aaa/ @targetX { @targetZ }+ ?libboost-container
 
 # Run tests but just for the main application:
 echo "running: bdep test"
@@ -69,4 +65,7 @@ b test: build-targetX/aaa/
 # Note that packages in @host will not have their tests setup except if you did manually set them up.
 echo "running all the tests from all configs (except @host)"
 bdep test --all
+
+# Lets look at what is really in @targetZ (dependencies, not initialized projects):
+bpkg status --all -d build-targetZ/
 
